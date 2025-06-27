@@ -1,14 +1,14 @@
 {
-    "name": "albetnov/sanctum-refresh",
+    "name": "toonboom/sanctum-refresh",
     "description": "This package extends sanctum ability to be able to provide refresh token as well",
     "keywords": [
-        "albetnov",
+        "toonboom",
         "laravel",
         "sanctum-refresh",
         "sanctum-refresh-token",
         "refresh-token"
     ],
-    "homepage": "https://github.com/albetnov/sanctum-refresh",
+    "homepage": "https://github.com/toonboom/sanctum-refresh",
     "license": "MIT",
     "authors": [
         {
@@ -19,7 +19,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "illuminate/contracts": "^11.0|^12.0",
+        "illuminate/contracts": "^10.0|^11.0|^12.0",
         "laravel/sanctum": "^4.0",
         "nesbot/carbon": "^3.8",
         "spatie/laravel-package-tools": "^1.18.0"
