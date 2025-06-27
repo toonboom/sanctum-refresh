@@ -63,7 +63,7 @@ class TokenIssuer
         // Find token from given id
         $token = RefreshToken::with('accessToken')
             ->check($tokenParts[1])
-            ->find($tokenParts[0]);
+            ->where('token_id', $tokenParts[0])->first();
 
         if (! $token) {
             return false;
