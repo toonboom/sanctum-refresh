@@ -72,7 +72,7 @@ class TokenIssuer
         // Regenerate token.
         $newToken = $token->accessToken->tokenable
             ->createToken(
-                $tokenName,
+                empty($token->accessToken->name) ? $tokenName : $token->accessToken->name,
                 $tokenConfig->abilities,
                 $tokenConfig->tokenExpireAt
             );
