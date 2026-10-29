@@ -6,6 +6,7 @@ use Albet\SanctumRefresh\Models\RefreshToken;
 use Albet\SanctumRefresh\Models\User;
 use Albet\SanctumRefresh\Services\TokenIssuer;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 it('throws ERR_INVALID_MODEL if tokenable model not having HasApiToken trait', function () {
@@ -31,6 +32,34 @@ it('generate the refresh token successfully', function () {
     $refreshToken = TokenIssuer::issue(User::find(1))->plainTextRefreshToken;
 
     expect(TokenIssuer::refreshToken($refreshToken))->toBeInstanceOf(Token::class);
+});
+
+it('refreshes correctly and keeps the original name when refresh_tokens.id diverges from token_id', function () {
+    $user = User::first();
+
+    // Desync refresh_tokens.id from token_id: an access token with no matching
+    // refresh token row shifts personal_access_tokens ids ahead of refresh_tokens ids.
+    $user->createToken('decoy');
+
+    $issued = TokenIssuer::issue($user, 'mobile');
+
+    $refreshed = TokenIssuer::refreshToken($issued->plainTextRefreshToken);
+
+    expect($refreshed)->toBeInstanceOf(Token::class)
+        ->and($refreshed->token->accessToken->name)->toBe('mobile');
+});
+
+it('refreshes without violating the token_id foreign key delete order', function () {
+    Schema::enableForeignKeyConstraints();
+
+    try {
+        $issued = TokenIssuer::issue(User::first());
+
+        expect(TokenIssuer::refreshToken($issued->plainTextRefreshToken))
+            ->toBeInstanceOf(Token::class);
+    } finally {
+        Schema::disableForeignKeyConstraints();
+    }
 });
 
 it('throw invalid token when token already expired', function () {
